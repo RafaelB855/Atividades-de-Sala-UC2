@@ -1,0 +1,21 @@
+{
+        "Funcionario":[
+        {"ID_Fun":1,"Nome_Fun":"João","CPF_Fun":12345,"Endereço_Fun":"Rua X, Casa 120","ID_Dep":20},
+        {"ID_Fun":2,"Nome_Fun":"Carlos","CPF_Fun":22345,"Endereço_Fun":"Rua Y, Casa 130","ID_Dep":40},
+        {"ID_Fun":3,"Nome_Fun":"Maria","CPF_Fun":32345,"Endereço_Fun":"Rua D, Casa 160","ID_Dep":20},
+        {"ID_Fun":4,"Nome_Fun":"Clara","CPF_Fun":42345,"Endereço_Fun":"Rua G, Casa 190","ID_Dep":30},
+        {"ID_Fun":5,"Nome_Fun":"Roberto","CPF_Fun":52345,"Endereço_Fun":"Rua S, Casa 160","ID_Dep":20},
+        {"ID_Fun":6,"Nome_Fun":"Francisco","CPF_Fun":62345,"Endereço_Fun":"Rua V, Casa 109","ID_Dep":40},
+        {"ID_Fun":7,"Nome_Fun":"Paulo","CPF_Fun":72345,"Endereço_Fun":"Rua X, Casa 105","ID_Dep":20},
+        {"ID_Fun":8,"Nome_Fun":"Cauan","CPF_Fun":82345,"Endereço_Fun":"Rua G, Casa 103","ID_Dep":40},
+        {"ID_Fun":9,"Nome_Fun":"Sabrina","CPF_Fun":92345,"Endereço_Fun":"Rua Y, Casa 120","ID_Dep":20},
+        {"ID_Fun":10,"Nome_Fun":"Patricia","CPF_Fun":13345,"Endereço_Fun":"Rua Z, Casa 100","ID_Dep":30}
+        ],
+        "Departamento":[
+        {"ID_Dep":20,"Nome_Dep":"Vendas","Horarios_Dep":"8 as 17 horas","Salario_Dep":2000,"Chefe_Dep":5},
+        {"ID_Dep":30,"Nome_Dep":"Administrativo","Horarios_Dep":"7 as 16 horas","Salario_Dep":2500,"Chefe_Dep":4},
+        {"ID_Dep":40,"Nome_Dep":"Entregas","Horarios_Dep":"9 as 17 horas","Salario_Dep":1800,"Chefe_Dep":8}
+        ]
+
+
+}
