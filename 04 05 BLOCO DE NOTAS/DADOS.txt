@@ -1,0 +1,105 @@
+Cadastro de Produto (Bando de Dados)
+
+Entidade: Produto
+
+Atributos:
+
+ID_PRODUTO(PK):
+NOME_PRODUTO:
+TAMALHO_PRODUTO:
+MARCA_PRODUTO:
+QNT_ESTOQUE:
+SESSÃO_ESTOQUE:
+PREÇO_PRODUTO:
+
+-----------------------------------------
+
+Cadastro de Produto (Bando de Dados)
+
+Entidade: Aluno
+
+Atributos:
+
+ID_ALUNO(PK):
+NOME_ALUNO:
+DATA_NASCIMENTO:
+RG_ALUNO:
+CPF_ALUNO:
+TELEFONE:
+ENDEREÇO:
+RUA_ALUNO:
+BAIRRO_ALUNO:
+CIDADE_ALUNO:
+CEP_ALUNO:
+
+Entidade: Professor
+
+Atributos:
+
+ID_PROF(PK):
+NOME_PROF:
+DATA_NASCIMENTO:
+RG_PROF:
+CPF_PROF:
+SALARIO_PROF:
+CONTA_BANCARIA:
+TELEFONE:
+ENDEREÇO:
+RUA_PROF:
+BAIRRO_PROF:
+CIDADE_PROF:
+CEP_PROF:
+
+-----------------------------------------
+
+Cadastro de Produto (Bando de Dados)
+
+Entidade: Tecido
+
+Atributos:
+
+ID_TECIDO(PK):
+TIPO_TECIDO:
+COR_TECIDO:
+FORNECEDOR_TECIDO:
+QNT_ESTOQUE(m²):
+PREÇO_(m²):
+
+Entidade: Fornecedor
+
+Atributos:
+
+ID_FORNECEDOR(PK):
+NOME_FORNECEDOR:
+CNPJ_FORNECEDOR:
+ENDEREÇO:
+RUA_FORNECEDOR:
+BAIRRO_FORNECEDOR:
+CIDADE_FORNECEDOR:
+CEP_FORNECEDOR:
+
+-----------------------------------------
+
+Cadastro de Produto (Bando de Dados)
+
+Entidade: Funcionario
+
+Atributos:
+
+ID_FUNCIONARIO(PK):
+TIPO_FUNCIONARIO:
+NOME_FUNCIONARIO:
+DATA_NASCIMENTO:
+RG_FUNCIONARIO:
+CPF_FUNCIONARIO:
+Nº_CART_TRABALHO:
+SALARIO_FUNCIONARIO:
+CONTA_BANCARIA:
+TELEFONE:
+ENDEREÇO:
+RUA_FUNCIONARIO:
+BAIRRO_FUNCIONARIO:
+CIDADE_FUNCIONARIO:
+CEP_FUNCIONARIO:
+
+-----------------------------------------
