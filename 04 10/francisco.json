@@ -1,0 +1,20 @@
+{
+"Funcionario":[
+    {"id_Funcionario":1, "Nome_Funcionario":"JUAN", "cpf":10002321,"salario_funcionario":1200,"id_Departamento":1},
+    {"id_Funcionario":2, "Nome_Funcionario":"Kalebe", "cpf":26562352,"salario_funcionario":1500,"id_Departamento":1},
+    {"id_Funcionario":3, "Nome_Funcionario":"Ana Maria", "cpf":2548722,"salario_funcionario":1200,"id_Departamento":2},
+    {"id_Funcionario":4, "Nome_Funcionario":"Manoel ", "cpf":547742,"salario_funcionario":5000,"id_Departamento":1},
+    {"id_Funcionario":5, "Nome_Funcionario":"Bruno", "cpf":2654123,"salario_funcionario":1500,"id_Departamento":3},
+    {"id_Funcionario":6, "Nome_Funcionario":"Rafael", "cpf":6987452,"salario_funcionario":1500,"id_Departamento":3},
+    {"id_Funcionario":7, "Nome_Funcionario":"Lyan", "cpf":9874752,"salario_funcionario":1500,"id_Departamento":3},
+    {"id_Funcionario":8, "Nome_Funcionario":"Henrique", "cpf":56471232,"salario_funcionario":1200,"id_Departamento":3},
+    {"id_Funcionario":9, "Nome_Funcionario":"Rita", "cpf":23564872,"salario_funcionario":5000,"id_Departamento":2},
+    {"id_Funcionario":10, "Nome_Funcionario":"Lucas", "cpf":2234124,"salario_funcionario":5000,"id_Departamento":3}
+],
+
+"Departamento":[ 
+    {"id_Departamento":1,"nome_departamento":"Vendas","renda_mensal_departamento":50000,"chefe_departamento":4},
+    {"id_Departamento":2,"nome_departamento":"Entregas","renda_mensal_departamento":50000,"chefe_departamento":9},
+    {"id_Departamento":3,"nome_departamento":"Logistica","renda_mensal_departamento":50000,"chefe_departamento":10}
+]
+}
