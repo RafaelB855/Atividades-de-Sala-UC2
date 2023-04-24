@@ -13,6 +13,14 @@ import psycopg2
 #     '''
 #     return sql
 
+#Criar Chave estrangeira em uma table existente#
+#ALTER TABLE "Funcionario"
+# ADD CONSTRAINT fk_departamento
+#         FOREIGN KEY("Id_Dep")
+#         REFERENCES "Departamento"("ID_Dep")
+#         ON DELETE NO ACTION
+#         ON UPDATE NO ACTION
+
 # def criarTabelaDepartamento():
 #     sql = '''
 #     CREATE TABLE "Departamento" (
@@ -24,7 +32,7 @@ import psycopg2
 #     return sql
 
 # try:
-#     conn = psycopg2.connect(dbname="SQL Soluções", host = "localhost", port = "5432", user= "postgres", password = "postgres")
+#     conn = psycopg2.connect(dbname="ZXC", host = "localhost", port = "5432", user= "postgres", password = "postgres")
 #     cursor = conn.cursor()
 #     print("Conectado com sucesso")
 
@@ -86,7 +94,7 @@ def verDepartamentoEspecifico(id):
 def verFuncionarios():
     cursor.execute('''
         SELECT * FROM "Funcionario"
-        ORDEM BY "ID_Fun" ASC
+        ORDER BY "ID_Fun" ASC
         ''')
 
     ListadeFuncionios = cursor.fetchall()
@@ -105,7 +113,7 @@ def verFuncionarios():
 def verDepartamento():
     cursor.execute('''
         SELECT * FROM "Departamento"
-        ORDEM BY "ID_Dep" ASC
+        ORDER BY "ID_Dep" ASC
         ''')
 
     ListadeDepartamento = cursor.fetchall()
@@ -158,7 +166,7 @@ def inserirDepartamento():
 
 
 try:
-    conn = psycopg2.connect(dbname="SQL Soluções", host = "localhost", port = "5432", user= "postgres", password = "postgres")
+    conn = psycopg2.connect(dbname="ZXC", host = "localhost", port = "5432", user= "postgres", password = "postgres")
     cursor = conn.cursor()
     print("Conectado com sucesso")
 
