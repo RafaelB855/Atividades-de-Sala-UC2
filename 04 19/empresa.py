@@ -13,7 +13,7 @@ import psycopg2
 #     '''
 #     return sql
 
-#Criar Chave estrangeira em uma table existente#
+#Alterar uma chave para chave estrangeira em uma table existente#
 #ALTER TABLE "Funcionario"
 # ADD CONSTRAINT fk_departamento
 #         FOREIGN KEY("Id_Dep")
