@@ -120,8 +120,100 @@ def cadastrarNovoCliente():
     else:
         print("Falha ao inserir o cliente!")
 
+def atualizarCliente():
+    print("Tela de atualização de cliente:")
+    print("Lista de Clientes")
+    
+    verListaDeClientes()
+    clienteEscolhido = input("Digite o id do cliente escolhido:")
+    verClienteEspecifico(clienteEscolhido)
+    novoNome = input("Digite o novo nome (vazio para não alterar):")
+    novoCPF = input("Digite o novo cpf (vazio para não alterar):")
 
+    if novoNome:
+        conexaoBanco.ManipularBanco(f'''
+        UPDATE "Clientes"
+        SET "Nome" = '{novoNome}'
+        WHERE "ID" = {clienteEscolhido}
+        ''')
 
+    if novoCPF:
+        conexaoBanco.ManipularBanco(f'''
+        UPDATE "Clientes"
+        SET "CPF" = '{novoCPF}'
+        WHERE "ID" = {clienteEscolhido}
+        ''')
+
+    print("Tentativa de alteração executada.")
+
+def verClienteEspecifico(idCliente):
+    cliente = conexaoBanco.ConsultarBanco(f'''SELECT * FROM "Clientes"
+    WHERE "ID" = {idCliente}
+    ''')[0]
+
+    if cliente:
+        cliente = cliente[0]
+        print("Cliente Escolhido: ")
+        print(f'''
+        ID - {cliente[0]}
+        Nome - {cliente[1]}
+        CPF - {cliente[2]}
+        ''')
+
+        listaAlugueis = conexaoBanco.ConsultarBanco(f'''
+        SELECT * FROM "Alugueis"
+        WHERE "ID_Cliente" = '{cliente[0]}'
+        ''')
+
+        if listaAlugueis:
+            print("Lista de alugueis: ")
+            print("ID | Cliente | Livro | Data de Aluguel")
+            for aluguel in listaAlugueis:
+                
+                clienteDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                SELECT * FROM "Clientes"
+                WHERE "ID" = {aluguel[1]}
+                ''')[0]
+
+                livroDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                SELECT * FROM "Livros"
+                WHERE "ID" = {aluguel[2]}
+                ''')[0]
+
+                print(f"{aluguel[0]} | {clienteDoAluguel[1]} | {livroDoAluguel[1]} | {aluguel[3]}")
+
+        else:
+            print("O cliente não possui aluguéis cadastrados")
+
+    else:
+        print("O cliente não foi encontrado!")
+
+def removerCliente():
+    print("Tela de remoção de cliente:")
+    print("Lista de Clientes")
+    
+    verListaDeClientes()
+    clienteEscolhido = input("Digite o id do cliente escolhido:")
+    verClienteEspecifico(clienteEscolhido)
+    confirmar = input("Deseja remover este cliente? (S/N)").upper()
+
+    match confirmar:
+        case "S":
+           resultadoRemocao = conexaoBanco.ManipularBanco(f'''
+           DELETE FROM "Clientes"
+           WHERE "ID" = '{clienteEscolhido}'
+           ''')
+           
+           if resultadoRemocao:
+               print("Cliente removido com sucesso.")
+           else:
+               print("Cliente não existe ou não foi removido.")
+        case "N":
+            print("Ok voltando ao menu principal")
+        case _:
+            print("Você digitou um comando inválido. Voltando ao menu.")
+
+#----------------------------------------------------------------------------------------------------------------------#
 
 def verMenuLivros():
 
@@ -185,37 +277,275 @@ def cadastrarNovoLivro():
     else:
         print("Falha ao inserir o livro!")
 
+def atualizarLivro():
+    print("Tela de atualização de Livro:")
+    print("Lista de Livros")
+    
+    verListaDeLivros()
+    LivroEscolhido = input("Digite o id do Livro escolhido:")
+    verLivroEspecifico(LivroEscolhido)
+    novoNome = input("Digite o novo Nome (vazio para não alterar):")
+    novoAutor = input("Digite o novo Autor (vazio para não alterar):")
 
-# def verMenuAlugueis():
+    if novoNome:
+        conexaoBanco.ManipularBanco(f'''
+        UPDATE "Livros"
+        SET "Nome" = '{novoNome}'
+        WHERE "ID" = {LivroEscolhido}
+        ''')
 
-#     while True:
-#         print('''
-#         Opções menu Alugueis:
-#         1. Ver lista de Alugueis
-#         2. Cadastrar Novo Aluguel
-#         3. Atualizar Aluguel
-#         4. Remover Aluguel
-#         0. Voltar ao menu principal
-#         ''')
-#         op = input("Escolha uma das opções:")
-#         match op:
-#             case "1":
-#                 verListaDeAlugueis()
-#             case "2":
-#                 cadastrarNovoAluguel()
-#             case "3":
-#                 atualizarAluguel()
-#             case "4":
-#                 removerAluguel()
-#             case "0":
-#                 print("Voltando ao menu principal...")
-#                 break
-#             case _:
-#                 print("Escolha uma opção válida.")
+    if novoAutor:
+        conexaoBanco.ManipularBanco(f'''
+        UPDATE "Livros"
+        SET "Autor" = '{novoAutor}'
+        WHERE "ID" = {LivroEscolhido}
+        ''')
 
-#         input("Digite Enter para continuar...")
+    print("Tentativa de alteração executada.")
+
+def verLivroEspecifico(idLivro):
+    Livro = conexaoBanco.ConsultarBanco(f'''SELECT * FROM "Livros"
+    WHERE "ID" = {idLivro}
+    ''')
+
+    if Livro:
+        Livro = Livro[0]
+        print("Livro Escolhido: ")
+        print(f'''
+        ID - {Livro[0]}
+        Nome - {Livro[1]}
+        Autor - {Livro[2]}
+        ''')
+
+        listaAlugueis = conexaoBanco.ConsultarBanco(f'''
+        SELECT * FROM "Alugueis"
+        WHERE "ID_Livro" = '{Livro[0]}'
+        ''')
+
+        if listaAlugueis:
+            print("Lista de alugueis: ")
+            print("ID | Cliente | Livro | Data de Aluguel")
+            for aluguel in listaAlugueis:
+                
+                ClienteDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                SELECT * FROM "Cliente"
+                WHERE "ID" = {aluguel[1]}
+                ''')[0]
+
+                livroDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                SELECT * FROM "Livros"
+                WHERE "ID" = {aluguel[2]}
+                ''')[0]
+
+                print(f"{aluguel[0]} | {ClienteDoAluguel[1]} | {livroDoAluguel[1]} | {aluguel[3]}")
+
+        else:
+            print("O Livro não possui aluguéis cadastrados")
+
+    else:
+        print("O Livro não foi encontrado!")
+
+def removerLivro():
+    print("Tela de remoção de Livro:")
+    print("Lista de Livros")
+    
+    verListaDeLivros()
+    LivroEscolhido = input("Digite o id do Livro escolhido:")
+    verLivroEspecifico(LivroEscolhido)
+    confirmar = input("Deseja remover este Livro? (S/N)").upper()
+
+    match confirmar:
+        case "S":
+           resultadoRemocao = conexaoBanco.ManipularBanco(f'''
+           DELETE FROM "Livros"
+           WHERE "ID" = '{LivroEscolhido}'
+           ''')
+           
+           if resultadoRemocao:
+               print("Livro removido com sucesso.")
+           else:
+               print("Livro não existe ou não foi removido.")
+        case "N":
+            print("Ok voltando ao menu principal")
+        case _:
+            print("Você digitou um comando inválido. Voltando ao menu.")
+
+#----------------------------------------------------------------------------------------------------------------------#
+
+def verMenuAlugueis():
+
+    while True:
+        print('''
+        Opções menu Alugueis:
+        1. Ver lista de Alugueis
+        2. Cadastrar Novo Aluguel
+        3. Atualizar Aluguel
+        4. Remover Aluguel
+        0. Voltar ao menu principal
+        ''')
+        op = input("Escolha uma das opções:")
+        match op:
+            case "1":
+                verListaDeAlugueis()
+            case "2":
+                cadastrarNovoAluguel()
+            case "3":
+                atualizarAluguel()
+            case "4":
+                removerAluguel()
+            case "0":
+                print("Voltando ao menu principal...")
+                break
+            case _:
+                print("Escolha uma opção válida.")
+
+        input("Digite Enter para continuar...")
+
+def verListaDeAlugueis():
+
+    listaAlugueis = conexaoBanco.ConsultarBanco('''
+    SELECT * FROM "Alugueis"
+    ORDER BY "ID" ASC
+    ''')
+
+    if listaAlugueis:
+        print("ID | CLIENTE | LIVRO | DATA DA RETIRADA")
+        for Aluguel in listaAlugueis:
+
+            clientedoaluguel = conexaoBanco.ConsultarBanco(f'''
+                SELECT * FROM "Clientes"
+                WHERE "ID" = '{Aluguel[1]}'
+                ''')[0]
+            
+            livrodoaluguel = conexaoBanco.ConsultarBanco(f'''
+                SELECT * FROM "Livros"
+                WHERE "ID" = '{Aluguel[2]}'
+                ''')[0]
 
 
+            print(f"{Aluguel[0]} | {clientedoaluguel[1]} | {livrodoaluguel[1]} | {Aluguel[3]}")
+
+    else:
+        print("Ocorreu um erro na consulta, ou a lista é vazia.")
+
+def cadastrarNovoAluguel():
+
+    print("Cadastro de Aluguel - Insira as informações pedidas")
+
+    verListaDeClientes()
+    idCliente = input("Digite o ID do Cliente:")
+
+    verListaDeLivros()
+    idlivro = input("Digite o ID do Livro:")
+
+    sqlInserir = f'''
+    INSERT INTO "Alugueis"
+    Values(default, '{idCliente}', '{idlivro}', default)
+    '''
+
+    if conexaoBanco.ManipularBanco(sqlInserir):
+
+        print(f"O Aluguel foi inserido com sucesso.")
+    else:
+        print("Falha ao cadastrar o Aluguel!")
+
+def atualizarAluguel():
+    print("Tela de atualização de Aluguel:")
+    print("Lista de Alugueis")
+    
+    verListaDeAlugueis()
+    AluguelEscolhido = input("Digite o id do Aluguel escolhido:")
+    verAluguelEspecifico(AluguelEscolhido)
+    novoIDCliente = input("Digite o novo ID do Cliente (vazio para não alterar):")
+    novoIDLivro = input("Digite o novo ID do Livro (vazio para não alterar):")
+
+    if novoIDCliente:
+        conexaoBanco.ManipularBanco(f'''
+        UPDATE "Alugueis"
+        SET "ID_Cliente" = '{novoIDCliente}',
+        "Data do Aluguel" = default
+        WHERE "ID" = {AluguelEscolhido}
+        ''')
+
+    if novoIDLivro:
+        conexaoBanco.ManipularBanco(f'''
+        UPDATE "Alugueis"
+        SET "ID_Livro" = '{novoIDLivro}',
+        "Data do Aluguel" = default
+        WHERE "ID" = {AluguelEscolhido}
+        ''')
+
+    print("Tentativa de alteração executada.")
+
+def verAluguelEspecifico(idAluguel):
+    Aluguel = conexaoBanco.ConsultarBanco(f'''SELECT * FROM "Alugueis"
+    WHERE "ID" = {idAluguel}
+    ''')
+
+    if Aluguel:
+        Aluguel = Aluguel[0]
+        print("Aluguel Escolhido: ")
+        print(f'''
+        ID - {Aluguel[0]}
+        ID_Cliente - {Aluguel[1]}
+        ID_Livro - {Aluguel[2]}
+        Data do Aluguel - {Aluguel[3]}
+        ''')
+
+        listaAlugueis = conexaoBanco.ConsultarBanco(f'''
+        SELECT * FROM "Alugueis"
+        WHERE "ID_Aluguel" = '{Aluguel[0]}'
+        ''')
+
+        if listaAlugueis:
+            print("Lista de alugueis: ")
+            print("ID | Cliente | Aluguel | Data de Aluguel")
+            for aluguel in listaAlugueis:
+                
+                ClienteDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                SELECT * FROM "Cliente"
+                WHERE "ID" = {aluguel[1]}
+                ''')[0]
+
+                LivroDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                SELECT * FROM "Livros"
+                WHERE "ID" = {aluguel[2]}
+                ''')[0]
+
+                print(f"{aluguel[0]} | {ClienteDoAluguel[1]} | {LivroDoAluguel[1]} | {aluguel[3]}")
+
+        else:
+            print("O Aluguel não possui aluguéis cadastrados")
+
+    else:
+        print("O Aluguel não foi encontrado!")
+
+def removerAluguel():
+    print("Tela de remoção de Aluguel:")
+    print("Lista de Alugueis")
+    
+    verListaDeAlugueis()
+    AluguelEscolhido = input("Digite o id do Aluguel escolhido:")
+    verAluguelEspecifico(AluguelEscolhido)
+    confirmar = input("Deseja remover este Aluguel? (S/N)").upper()
+
+    match confirmar:
+        case "S":
+           resultadoRemocao = conexaoBanco.ManipularBanco(f'''
+           DELETE FROM "Alugueis"
+           WHERE "ID" = '{AluguelEscolhido}'
+           ''')
+           
+           if resultadoRemocao:
+               print("Aluguel removido com sucesso.")
+           else:
+               print("Aluguel não existe ou não foi removido.")
+        case "N":
+            print("Ok voltando ao menu principal")
+        case _:
+            print("Você digitou um comando inválido. Voltando ao menu.")
+
+#----------------------------------------------------------------------------------------------------------------------#
 
 while True:
 
