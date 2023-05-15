@@ -30,10 +30,11 @@ def criarTabela(con):
     "ID_Time" int NOT NULL,
     "Pontos" int NOT NULL,
     "Vitorias" int NOT NULL,
-    "Derrotas" int NOT NULL,
     "Empates" int NOT NULL,
-    "GolsFeitos" int NOT NULL,
-    "GolsTomados" int NOT NULL,
+    "Derrotas" int NOT NULL,
+    "GolsPró" int NOT NULL,
+    "GolsContra" int NOT NULL,
+    "SaldodeGols" int NOT NULL,
     CONSTRAINT fk_Time
         FOREIGN KEY("ID_Time")
         REFERENCES "Times"("ID")
@@ -50,6 +51,34 @@ def criarTabela(con):
 conexaoBanco = Conexao("Campeonato","localhost","5432","postgres","postgres")
 #criarTabela(conexaoBanco) 
 #----------------------------------------------------------------------------------------------------------------------#
+def verMenuClientes():
+
+    while True:
+        print('''
+        Opções menu Times:
+        1. Ver Times
+        2. Criar Time
+        3. Atualizar Time
+        4. Remover Time
+        0. Voltar ao menu principal
+        ''')
+        op = input("Escolha uma das opções:")
+        match op:
+            case "1":
+                verListaDeTimes()
+            case "2":
+                cadastrarNovoTime()
+            case "3":
+                atualizarTime()
+            case "4":
+                removerTime()
+            case "0":
+                print("Voltando ao menu principal...")
+                break
+            case _:
+                print("Escolha uma opção válida.")
+
+        input("Digite Enter para continuar...")
 
 def verListaDeTimes():
 
@@ -82,20 +111,145 @@ def cadastrarNovoTime():
         print(f"O time {nome} foi inserido com sucesso.")
     else:
         print("Falha ao inserir o time!")
-#########################################################################
+
+def atualizarTime():
+    print("Tela de atualização de time:")
+    print("Lista de Times")
+    
+    verListaDeTimes()
+    TimeEscolhido = input("Digite o id do time escolhido:")
+    verTimeEspecifico(TimeEscolhido)
+    novoNome = input("Digite o novo nome (vazio para não alterar):")
+
+    if novoNome:
+        conexaoBanco.ManipularBanco(f'''
+        UPDATE "Times"
+        SET "Nome" = '{novoNome}'
+        WHERE "ID" = {TimeEscolhido}
+        ''')
+
+    print("Tentativa de alteração executada.")
+
+def verTimeEspecifico(idTime):
+    Time = conexaoBanco.ConsultarBanco(f'''SELECT * FROM "Times"
+    WHERE "ID" = {idTime}
+    ''')[0]
+
+    if Time:
+        Time = Time[0]
+        print("Time Escolhido: ")
+        print(f'''
+        ID - {Time[0]}
+        Nome - {Time[1]}
+        ''')
+
+        listaPartidas = conexaoBanco.ConsultarBanco(f'''
+        SELECT * FROM "Partidas"
+        WHERE "Time1" = '{Time[0]}' and "Time2" = '{Time[0]}'
+        ''')
+
+        if listaPartidas:
+            print(" TIME | PLACAR | TIME ")
+            for Partida in listaPartidas:
+                
+                Time1daPartida = conexaoBanco.consultarBanco(f'''
+                    SELECT * FROM "Times"
+                    WHERE "ID" = '{Partida[1]}'
+                    ''')[0]
+                
+                Time2daPartida = conexaoBanco.consultarBanco(f'''
+                    SELECT * FROM "Times"
+                    WHERE "ID" = '{Partida[4]}'
+                    ''')[0]
+                
+                print(f"{Time1daPartida[1]} | {Partida[2]} / {Partida[3]} | {Time2daPartida[1]} ")
+
+        else:
+            print("O time não possui partidas")
+
+    else:
+        print("O time não foi encontrado!")
+
+    if Time:
+        Time = Time[0]
+        print("Time Escolhido: ")
+        print(f'''
+        ID - {Time[0]}
+        Nome - {Time[1]}
+        ''')
+
+        listaTabelas = conexaoBanco.ConsultarBanco(f'''
+        SELECT * FROM "Tabela"
+        WHERE "ID_Time" = '{Time[0]}'
+        ''')
+
+        if listaTabelas:
+            print("RANK | TIME | P | V | E | D | GP | GC | SG")
+            for Tabela in listaTabelas:
+                
+                TimedaTabela = conexaoBanco.consultarBanco(f'''
+                    SELECT * FROM "Times"
+                    WHERE "ID" = '{Tabela[1]}'
+                    ''')[0]
+
+                print(f"{Tabela[0]} | {TimedaTabela[1]} | {Tabela[2]} | {Tabela[3]} | {Tabela[4]} | {Tabela[5]} | {Tabela[6]} | {Tabela[7]} | {Tabela[8]}")
+
+
+        else:
+            print("O time não possui cadastrados na tabela")
+
+    else:
+        print("O time não foi encontrado!")
+
+def removerTime():
+    print("Tela de remoção de time:")
+    print("Lista de Times")
+    
+    verListaDeTimes()
+    timeEscolhido = input("Digite o id do time escolhido:")
+    verTimeEspecifico(timeEscolhido)
+    confirmar = input("Deseja remover este time? (S/N)").upper()
+
+    match confirmar:
+        case "S":
+           resultadoRemocao = conexaoBanco.ManipularBanco(f'''
+           DELETE FROM "Times"
+           WHERE "ID" = '{timeEscolhido}'
+           ''')
+           
+           if resultadoRemocao:
+               print("Time removido com sucesso.")
+           else:
+               print("Time não existe ou não foi removido.")
+        case "N":
+            print("Ok voltando ao menu principal")
+        case _:
+            print("Você digitou um comando inválido. Voltando ao menu.")
+
 #----------------------------------------------------------------------------------------------------------------------#
 
 def verListaDePartidas():
 
-    listaLivros = conexaoBanco.consultarBanco('''
-    SELECT * FROM "Livros"
+    listaPartidas = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Partidas"
     ORDER BY "ID" ASC
     ''')
 
-    if listaLivros:
-        print("ID | NOME | Autor")
-        for livro in listaLivros:
-            print(f"{livro[0]} | {livro[1]} | {livro[2]}")
+    if listaPartidas:
+        print(" TIME | PLACAR | TIME ")
+        for Partida in listaPartidas:
+            
+            Time1daPartida = conexaoBanco.consultarBanco(f'''
+                SELECT * FROM "Times"
+                WHERE "ID" = '{Partida[1]}'
+                ''')[0]
+            
+            Time2daPartida = conexaoBanco.consultarBanco(f'''
+                SELECT * FROM "Times"
+                WHERE "ID" = '{Partida[4]}'
+                ''')[0]
+            
+            print(f"{Time1daPartida[1]} | {Partida[2]} / {Partida[3]} | {Time2daPartida[1]} ")
 
     else:
         print("Ocorreu um erro na consulta, ou a lista é vazia.")
@@ -104,27 +258,21 @@ def verListaDePartidas():
 
 def verListaDeTabela():
 
-    listaAlugueis = conexaoBanco.consultarBanco('''
-    SELECT * FROM "Alugueis"
-    ORDER BY "ID" ASC
+    listaTabelas = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Tabela"
+    ORDER BY "Pontos" ASC
     ''')
 
-    if listaAlugueis:
-        print("ID | CLIENTE | LIVRO | DATA DA RETIRADA")
-        for Aluguel in listaAlugueis:
-
-            clientedoaluguel = conexaoBanco.consultarBanco(f'''
-                SELECT * FROM "Clientes"
-                WHERE "ID" = '{Aluguel[1]}'
-                ''')[0]
+    if listaTabelas:
+        print("RANK | TIME | P | V | E | D | GP | GC | SG")
+        for Tabela in listaTabelas:
             
-            livrodoaluguel = conexaoBanco.consultarBanco(f'''
-                SELECT * FROM "Livros"
-                WHERE "ID" = '{Aluguel[2]}'
+            TimedaTabela = conexaoBanco.consultarBanco(f'''
+                SELECT * FROM "Times"
+                WHERE "ID" = '{Tabela[1]}'
                 ''')[0]
 
-
-            print(f"{Aluguel[0]} | {clientedoaluguel[1]} | {livrodoaluguel[1]} | {Aluguel[3]}")
+            print(f"{Tabela[0]} | {TimedaTabela[1]} | {Tabela[2]} | {Tabela[3]} | {Tabela[4]} | {Tabela[5]} | {Tabela[6]} | {Tabela[7]} | {Tabela[8]}")
 
     else:
         print("Ocorreu um erro na consulta, ou a lista é vazia.")
@@ -135,8 +283,8 @@ while True:
 
     print('''
     Bem vindo ao Campeonato
-    1. Ver Times
-    2. Ver Tabelas
+    1. Menu de Times
+    2. Ver Partidas
     3. Ver Tabelas
     0. Sair
     ''')
@@ -145,12 +293,10 @@ while True:
 
     match op:
         case "1":
-            verListaDeTimes()
+            verMenuClientes()
         case "2":
-            cadastrarNovoTime()
-        case "3":
             verListaDePartidas()
-        case "4":
+        case "3":
             verListaDeTabela()
         case "0":
             print("Saindo da programa...")
