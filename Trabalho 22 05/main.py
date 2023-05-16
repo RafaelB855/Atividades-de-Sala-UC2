@@ -1,4 +1,5 @@
 from conexao import Conexao
+import random
 
 def criarTabela(con):
     listaSql=['''
@@ -50,8 +51,10 @@ def criarTabela(con):
 
 conexaoBanco = Conexao("Campeonato","localhost","5432","postgres","postgres")
 #criarTabela(conexaoBanco) 
+
 #----------------------------------------------------------------------------------------------------------------------#
-def verMenuClientes():
+
+def verMenuTimes():
 
     while True:
         print('''
@@ -104,8 +107,7 @@ def cadastrarNovoTime():
     INSERT INTO "Times"
     Values(default, '{nome}')
     '''
-
-
+    
     if conexaoBanco.manipularBanco(sqlInserir):
 
         print(f"O time {nome} foi inserido com sucesso.")
@@ -122,18 +124,21 @@ def atualizarTime():
     novoNome = input("Digite o novo nome (vazio para não alterar):")
 
     if novoNome:
-        conexaoBanco.ManipularBanco(f'''
+        conexaoBanco.manipularBanco(f'''
         UPDATE "Times"
         SET "Nome" = '{novoNome}'
         WHERE "ID" = {TimeEscolhido}
         ''')
 
-    print("Tentativa de alteração executada.")
+        print(f"O nome foi alterado para '{novoNome}'.")
+    
+    if novoNome == "":
+        print("O nome não foi alterado.")
 
 def verTimeEspecifico(idTime):
-    Time = conexaoBanco.ConsultarBanco(f'''SELECT * FROM "Times"
+    Time = conexaoBanco.consultarBanco(f'''SELECT * FROM "Times"
     WHERE "ID" = {idTime}
-    ''')[0]
+    ''')
 
     if Time:
         Time = Time[0]
@@ -143,13 +148,13 @@ def verTimeEspecifico(idTime):
         Nome - {Time[1]}
         ''')
 
-        listaPartidas = conexaoBanco.ConsultarBanco(f'''
+        listaPartidas = conexaoBanco.consultarBanco(f'''
         SELECT * FROM "Partidas"
-        WHERE "Time1" = '{Time[0]}' and "Time2" = '{Time[0]}'
+        WHERE "Time1" = '{Time[0]}' or "Time2" = '{Time[0]}'
         ''')
 
         if listaPartidas:
-            print(" TIME | PLACAR | TIME ")
+            print("TIME | PLACAR | TIME")
             for Partida in listaPartidas:
                 
                 Time1daPartida = conexaoBanco.consultarBanco(f'''
@@ -171,20 +176,20 @@ def verTimeEspecifico(idTime):
         print("O time não foi encontrado!")
 
     if Time:
-        Time = Time[0]
+        Time = Time
         print("Time Escolhido: ")
         print(f'''
         ID - {Time[0]}
         Nome - {Time[1]}
         ''')
 
-        listaTabelas = conexaoBanco.ConsultarBanco(f'''
+        listaTabelas = conexaoBanco.consultarBanco(f'''
         SELECT * FROM "Tabela"
         WHERE "ID_Time" = '{Time[0]}'
         ''')
 
         if listaTabelas:
-            print("RANK | TIME | P | V | E | D | GP | GC | SG")
+            print("TIME | P | V | E | D | GP | GC | SG")
             for Tabela in listaTabelas:
                 
                 TimedaTabela = conexaoBanco.consultarBanco(f'''
@@ -192,7 +197,7 @@ def verTimeEspecifico(idTime):
                     WHERE "ID" = '{Tabela[1]}'
                     ''')[0]
 
-                print(f"{Tabela[0]} | {TimedaTabela[1]} | {Tabela[2]} | {Tabela[3]} | {Tabela[4]} | {Tabela[5]} | {Tabela[6]} | {Tabela[7]} | {Tabela[8]}")
+                print(f"{TimedaTabela[1]} | {Tabela[2]} | {Tabela[3]} | {Tabela[4]} | {Tabela[5]} | {Tabela[6]} | {Tabela[7]} | {Tabela[8]}")
 
 
         else:
@@ -212,7 +217,7 @@ def removerTime():
 
     match confirmar:
         case "S":
-           resultadoRemocao = conexaoBanco.ManipularBanco(f'''
+           resultadoRemocao = conexaoBanco.manipularBanco(f'''
            DELETE FROM "Times"
            WHERE "ID" = '{timeEscolhido}'
            ''')
@@ -228,6 +233,38 @@ def removerTime():
 
 #----------------------------------------------------------------------------------------------------------------------#
 
+def verMenuPartidas():
+
+    while True:
+        print('''
+        Opções menu Times:
+        1. Ver Partidas
+        2. Gerar Campeonato
+        3. Criar Partida(Manualmente)
+        4. Atualizar Partida
+        5. Remover Partida
+        0. Voltar ao menu principal
+        ''')
+        op = input("Escolha uma das opções:")
+        match op:
+            case "1":
+                verListaDePartidas()
+            case "2":
+                gerarCampeonato()
+            case "3":
+                criarPartida()
+            case "4":
+                atualizarPartida()
+            case "5":
+                removerPartida()
+            case "0":
+                print("Voltando ao menu principal...")
+                break
+            case _:
+                print("Escolha uma opção válida.")
+
+        input("Digite Enter para continuar...")
+
 def verListaDePartidas():
 
     listaPartidas = conexaoBanco.consultarBanco('''
@@ -236,7 +273,121 @@ def verListaDePartidas():
     ''')
 
     if listaPartidas:
-        print(" TIME | PLACAR | TIME ")
+        print("ID | TIME | PLACAR | TIME")
+        for Partida in listaPartidas:
+            
+            Time1daPartida = conexaoBanco.consultarBanco(f'''
+                SELECT * FROM "Times"
+                WHERE "ID" = '{Partida[1]}'
+                ''')[0]
+            
+            Time2daPartida = conexaoBanco.consultarBanco(f'''
+                SELECT * FROM "Times"
+                WHERE "ID" = '{Partida[4]}'
+                ''')[0]
+            
+            print(f"{Partida[0]} | {Time1daPartida[1]} | {Partida[2]} / {Partida[3]} | {Time2daPartida[1]} ")
+
+    else:
+        print("Ocorreu um erro na consulta, ou a lista é vazia.")
+
+def gerarCampeonato():
+
+    listaTimes = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Times"
+    ''')
+#Aperfeiçoa esse range para usar o ID da propria lista#
+    for Time1 in range(len(listaTimes)):
+        Time1 = Time1 + 1
+        for Time2 in range(len(listaTimes)):
+            Time2 = Time2 + 1
+            if Time1 != Time2:
+                Gols1 = random.randrange(0,5)
+                Gols2 = random.randrange(0,5)
+                sqlInserir = f'''
+                    INSERT INTO "Partidas"
+                    Values(default,{Time1},{Gols1},{Gols2},{Time2})
+                    '''
+                    
+                if conexaoBanco.manipularBanco(sqlInserir):
+                    print("Campeonato gerado com sucesso.")
+                else:
+                    print("Falha ao gerar campeonato!")
+
+def criarPartida():
+
+    listaTimes = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Times"
+    ORDER BY "ID" ASC
+    ''')
+
+    if listaTimes:
+        print("ID | NOME")
+        for Time in listaTimes:
+            print(f"{Time[0]} | {Time[1]}")
+
+    else:
+        print("Ocorreu um erro na consulta, ou a lista é vazia.")
+
+
+    Time1 = input("Digite o id do time desejado:")
+    if Time1.isdigit():
+        Time2 = input(f"Digite o id do time que iria enfrentar o time {Time1}:")
+        if Time1 != Time2 and Time2.isdigit():
+            Gols1 = input("Digite a quantidade de gols do time escolhido:")
+            if Gols1.isdigit():
+                Gols2 = input("Digite a quantidade de gols do time adversário:")
+                if Gols2.isdigit():
+                    sqlInserir = f'''
+                        INSERT INTO "Partidas"
+                        Values(default, {Time1},{Gols1},{Gols2},{Time2})
+                        '''
+                                
+                if conexaoBanco.manipularBanco(sqlInserir):
+                    print("Partida gerada com sucesso.")
+                else:
+                    print("Falha ao gerar Partida!")
+    else:
+        print("Escolha uma opção válida.")
+
+def atualizarPartida():
+    print("Tela de atualização de Partida:")
+    print("Lista de Partidas")
+    
+    verListaDePartidas()
+    PartidaEscolhido = input("Digite o id do partida escolhida:")
+    if PartidaEscolhido.isdigit():
+        verPartidaEspecifico(PartidaEscolhido)
+        Time1 = input("Digite o id do time desejado:")
+        if Time1.isdigit():
+            Time2 = input(f"Digite o id do time que iria enfrentar o time {Time1}:")
+            if Time1 != Time2 and Time2.isdigit():
+                Gols1 = input("Digite a quantidade de gols do time escolhido:")
+                if Gols1.isdigit():
+                    Gols2 = input("Digite a quantidade de gols do time adversário:")
+                    if Gols2.isdigit():
+                        sqlInserir = f'''
+                           UPDATE "Partidas"
+                            SET "Time1" = {Time1}, "Gols1" = {Gols1}, "Gols2" = {Gols2}, "Time2" = {Time2}
+                            WHERE "ID" = {PartidaEscolhido[0]}
+                            '''
+                                    
+                    if conexaoBanco.manipularBanco(sqlInserir):
+                        print("Partida alterada com sucesso.")
+                    else:
+                        print("Falha ao gerar Partida!")
+    else:
+        print("Escolha uma opção válida.")
+
+def verPartidaEspecifico(idPartida):
+
+    listaPartidas = conexaoBanco.consultarBanco(f'''
+    SELECT * FROM "Partidas"
+    WHERE "ID" = {idPartida[0]}
+    ''')
+
+    if listaPartidas:
+        print("TIME | PLACAR | TIME")
         for Partida in listaPartidas:
             
             Time1daPartida = conexaoBanco.consultarBanco(f'''
@@ -252,19 +403,209 @@ def verListaDePartidas():
             print(f"{Time1daPartida[1]} | {Partida[2]} / {Partida[3]} | {Time2daPartida[1]} ")
 
     else:
-        print("Ocorreu um erro na consulta, ou a lista é vazia.")
+        print("O Partidas não foi encontradas!")
+
+def removerPartida():
+    print("Tela de remoção de Partida:")
+    print("Lista de Partidas")
+    
+    verListaDePartidas()
+    partidaEscolhido = input("Digite o id do partida escolhida:")
+    verPartidaEspecifico(partidaEscolhido)
+    confirmar = input("Deseja remover esta partida? (S/N)").upper()
+
+    match confirmar:
+        case "S":
+           resultadoRemocao = conexaoBanco.manipularBanco(f'''
+           DELETE FROM "Partidas"
+           WHERE "ID" = '{partidaEscolhido}'
+           ''')
+           
+           if resultadoRemocao:
+               print("Partida removida com sucesso.")
+           else:
+               print("Partida não existe ou não foi removido.")
+        case "N":
+            print("Ok voltando ao menu principal")
+        case _:
+            print("Você digitou um comando inválido. Voltando ao menu.")
 
 #----------------------------------------------------------------------------------------------------------------------#
 
+def verMenuTabela():
+
+    while True:
+        print('''
+        Opções menu Tabela:
+        1. Ver Tabela
+        2. Atualizar Tabela
+        3. Zerar Tabela
+        0. Voltar ao menu principal
+        ''')
+        op = input("Escolha uma das opções:")
+        match op:
+            case "1":
+                verListaDeTabela()
+            case "2":
+                atualizarTabela()
+            case "3":
+                zerarTabela()
+            case "0":
+                print("Voltando ao menu principal...")
+                break
+            case _:
+                print("Escolha uma opção válida.")
+
+        input("Digite Enter para continuar...")
+
 def verListaDeTabela():
+
+    i = 0
 
     listaTabelas = conexaoBanco.consultarBanco('''
     SELECT * FROM "Tabela"
-    ORDER BY "Pontos" ASC
+    ORDER BY "Pontos" DESC
     ''')
 
     if listaTabelas:
-        print("RANK | TIME | P | V | E | D | GP | GC | SG")
+        print("RK | TIME | P | V | E | D | GP | GC | SG")
+        for Tabela in listaTabelas:
+
+            i = i + 1
+            
+            TimedaTabela = conexaoBanco.consultarBanco(f'''
+                SELECT * FROM "Times"
+                WHERE "ID" = '{Tabela[1]}'
+                ''')[0]
+
+            print(f"{i} | {TimedaTabela[1]} | {Tabela[2]} | {Tabela[3]} | {Tabela[4]} | {Tabela[5]} | {Tabela[6]} | {Tabela[7]} | {Tabela[8]}")
+
+    else:
+        print("Ocorreu um erro na consulta, ou a lista é vazia.")
+
+def atualizarTabela():
+
+    listaTimes = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Times"
+    ORDER BY "ID" ASC
+    ''')
+
+#Aperfeiçoa esse range para usar o ID da propria lista#
+    for idTime in range(len(listaTimes)):
+        idTime = idTime + 1
+
+        Time = conexaoBanco.consultarBanco(f'''SELECT * FROM "Times"
+        WHERE "ID" = {idTime}
+        ''')
+
+        if Time:
+            Time = Time[0]
+            print("Time Escolhido: ")
+            print(f'''
+            ID - {Time[0]}
+            Nome - {Time[1]}
+            ''')
+
+            vitoria = 0
+            vitoriaF = 0
+            empate = 0
+            empateF = 0
+            derrota = 0
+            derrotaF = 0
+            pontosV = 0
+            pontosVF = 0
+            pontosE = 0
+            pontosEF = 0
+            pontosD = 0
+            pontosDF = 0
+            golsPros = 0
+            golsProsF = 0
+            golsContras = 0
+            golsContrasF = 0 
+            lista2 = 0
+            lista3 = 0
+            listaF3 = 0
+            listaF2 = 0
+
+            listaPartidas = conexaoBanco.consultarBanco(f'''
+            SELECT * FROM "Partidas"
+            WHERE "Time1" = '{Time[0]}'
+            ''')
+
+            for partida in range(len(listaPartidas)):
+                partida = partida + 1
+                if listaPartidas[2]>listaPartidas[3]:
+                    vitoria = vitoria + 1
+                    pontosV = pontosV + 3 
+                if listaPartidas[2]==listaPartidas[3]:
+                    empate = empate + 1
+                    pontosE = pontosE + 1
+                if listaPartidas[2]<listaPartidas[3]:
+                    derrota = derrota + 1
+                    pontosD = pontosD + 0
+
+                lista2 = listaPartidas[2]
+                lista3 = listaPartidas[3]
+################                golsPros = golsPros + lista2
+                golsContras = golsContras + lista3
+                saldodeGols = golsPros - golsContras
+
+            listaPartidasFora = conexaoBanco.consultarBanco(f'''
+            SELECT * FROM "Partidas"
+            WHERE "Time2" = '{Time[0]}'
+            ''')
+
+            for partidaF in range (len(listaPartidasFora)):
+                partidaF = partidaF +1 
+
+                if listaPartidasFora[2]>listaPartidasFora[3]:
+                    vitoriaF = vitoriaF + 1
+                    pontosVF = pontosVF + 3 
+                if listaPartidasFora[2]==listaPartidasFora[3]:
+                    empateF = empateF + 1
+                    pontosEF = pontosEF + 1
+                if listaPartidasFora[2]<listaPartidasFora[3]:
+                    derrotaF = derrotaF + 1
+                    pontosDF = pontosDF + 0
+
+                listaF3 = listaPartidasFora[3]
+                listaF2 = listaPartidasFora[2]
+                golsProsF = golsProsF + listaF3
+                golsContrasF = golsContrasF + listaF2
+                saldodeGolsF = golsProsF - golsContrasF
+
+                vitoriasTotais = vitoria + vitoriaF
+                empatesTotais = empate + empateF
+                derrotasTotais = derrota + derrotaF
+                pontosTorais = pontosV + pontosE + pontosVF + pontosEF
+                saldodeGolsTotais = saldodeGols + saldodeGolsF
+
+        sqlInserir = f'''
+        INSERT INTO "Tabela"
+        Values(default, {idTime},{pontosTorais},{vitoriasTotais},{empatesTotais},{derrotasTotais},{golsProsF},{golsContrasF},{saldodeGolsTotais})
+        '''
+    
+        if conexaoBanco.manipularBanco(sqlInserir):
+
+            print(f"A Tabela foi atualizada com sucesso.")
+        else:
+            print("Falha ao atualizar tabela!")
+
+    else:
+        print("O time não foi encontrado!")
+    
+def zerarTabela():
+
+    print("Tela de remoção de tabela:")
+    print("Lista de Tabela")
+    
+    listaTabelas = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Tabela"
+    ORDER BY "Pontos" DESC
+    ''')
+
+    if listaTabelas:
+        print("RK | TIME | P | V | E | D | GP | GC | SG")
         for Tabela in listaTabelas:
             
             TimedaTabela = conexaoBanco.consultarBanco(f'''
@@ -277,6 +618,33 @@ def verListaDeTabela():
     else:
         print("Ocorreu um erro na consulta, ou a lista é vazia.")
 
+#Aperfeiçoa esse range para usar o ID da propria lista#
+    listaTabela = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Tabela"
+    ORDER BY "ID" ASC
+    ''')
+
+    confirmar = input("Deseja remover zerar tabela? (S/N)").upper()
+
+    match confirmar:
+        case "S":
+           
+           for idTabela in  range(len(listaTabela)):
+            idTabela = idTabela +1
+            sqlRemocao = f'''
+            DELETE FROM "Tabela"
+            WHERE "ID" = '{idTabela}'
+            '''
+            
+            if conexaoBanco.manipularBanco(sqlRemocao):
+                print("Tabela zerada com sucesso.")
+            else:
+                print("Tabela não existe ou não foi removido.")
+        case "N":
+            print("Ok voltando ao menu principal")
+        case _:
+            print("Você digitou um comando inválido. Voltando ao menu.")
+
 #----------------------------------------------------------------------------------------------------------------------#
 
 while True:
@@ -284,8 +652,8 @@ while True:
     print('''
     Bem vindo ao Campeonato
     1. Menu de Times
-    2. Ver Partidas
-    3. Ver Tabelas
+    2. Menu das Partidas
+    3. Menu da Tabela
     0. Sair
     ''')
 
@@ -293,11 +661,11 @@ while True:
 
     match op:
         case "1":
-            verMenuClientes()
+            verMenuTimes()
         case "2":
-            verListaDePartidas()
+            verMenuPartidas()
         case "3":
-            verListaDeTabela()
+            verMenuTabela()
         case "0":
             print("Saindo da programa...")
             break
