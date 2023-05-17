@@ -177,11 +177,6 @@ def verTimeEspecifico(idTime):
 
     if Time:
         Time = Time
-        print("Time Escolhido: ")
-        print(f'''
-        ID - {Time[0]}
-        Nome - {Time[1]}
-        ''')
 
         listaTabelas = conexaoBanco.consultarBanco(f'''
         SELECT * FROM "Tabela"
@@ -189,7 +184,7 @@ def verTimeEspecifico(idTime):
         ''')
 
         if listaTabelas:
-            print("TIME | P | V | E | D | GP | GC | SG")
+            print("\nTIME | P | V | E | D | GP | GC | SG")
             for Tabela in listaTabelas:
                 
                 TimedaTabela = conexaoBanco.consultarBanco(f'''
@@ -296,11 +291,11 @@ def gerarCampeonato():
     listaTimes = conexaoBanco.consultarBanco('''
     SELECT * FROM "Times"
     ''')
-#Aperfeiçoa esse range para usar o ID da propria lista#
-    for Time1 in range(len(listaTimes)):
-        Time1 = Time1 + 1
-        for Time2 in range(len(listaTimes)):
-            Time2 = Time2 + 1
+
+    for Time1 in listaTimes:
+        Time1 = Time1[0]
+        for Time2 in listaTimes:
+            Time2 = Time2[0]
             if Time1 != Time2:
                 Gols1 = random.randrange(0,5)
                 Gols2 = random.randrange(0,5)
@@ -490,9 +485,28 @@ def atualizarTabela():
     ORDER BY "ID" ASC
     ''')
 
-#Aperfeiçoa esse range para usar o ID da propria lista#
-    for idTime in range(len(listaTimes)):
-        idTime = idTime + 1
+    for idTime in listaTimes:
+        idTime = idTime[0]
+
+        vitoria = 0
+        empate = 0
+        derrota = 0
+        pontosV = 0
+        pontosE = 0
+        pontosD = 0
+        golsPros = 0
+        golsContras = 0
+        golsProsTotal = 0
+        golsContrasTotal = 0
+        saldodeGolsTotais = 0
+        vitoriaF = 0
+        empateF = 0
+        derrotaF = 0
+        pontosVF = 0
+        pontosEF = 0
+        pontosDF = 0
+        golsProsF = 0
+        golsContrasF = 0
 
         Time = conexaoBanco.consultarBanco(f'''SELECT * FROM "Times"
         WHERE "ID" = {idTime}
@@ -506,83 +520,60 @@ def atualizarTabela():
             Nome - {Time[1]}
             ''')
 
-            vitoria = 0
-            vitoriaF = 0
-            empate = 0
-            empateF = 0
-            derrota = 0
-            derrotaF = 0
-            pontosV = 0
-            pontosVF = 0
-            pontosE = 0
-            pontosEF = 0
-            pontosD = 0
-            pontosDF = 0
-            golsPros = 0
-            golsProsF = 0
-            golsContras = 0
-            golsContrasF = 0 
-            lista2 = 0
-            lista3 = 0
-            listaF3 = 0
-            listaF2 = 0
-
             listaPartidas = conexaoBanco.consultarBanco(f'''
             SELECT * FROM "Partidas"
             WHERE "Time1" = '{Time[0]}'
             ''')
 
-            for partida in range(len(listaPartidas)):
-                partida = partida + 1
-                if listaPartidas[2]>listaPartidas[3]:
+            for partida in listaPartidas:
+
+                if partida[2]<partida[3]:
                     vitoria = vitoria + 1
                     pontosV = pontosV + 3 
-                if listaPartidas[2]==listaPartidas[3]:
+                if partida[2]==partida[3]:
                     empate = empate + 1
                     pontosE = pontosE + 1
-                if listaPartidas[2]<listaPartidas[3]:
+                if partida[2]>partida[3]:
                     derrota = derrota + 1
                     pontosD = pontosD + 0
 
-                lista2 = listaPartidas[2]
-                lista3 = listaPartidas[3]
-################                golsPros = golsPros + lista2
-                golsContras = golsContras + lista3
-                saldodeGols = golsPros - golsContras
+                golsPros = golsPros + partida[2]
+                golsContras = golsContras + partida[3]
 
             listaPartidasFora = conexaoBanco.consultarBanco(f'''
             SELECT * FROM "Partidas"
             WHERE "Time2" = '{Time[0]}'
             ''')
 
-            for partidaF in range (len(listaPartidasFora)):
-                partidaF = partidaF +1 
+            for partidaF in listaPartidasFora:
 
-                if listaPartidasFora[2]>listaPartidasFora[3]:
+                if partidaF[2]<partidaF[3]:
                     vitoriaF = vitoriaF + 1
-                    pontosVF = pontosVF + 3 
-                if listaPartidasFora[2]==listaPartidasFora[3]:
+                    pontosVF = pontosVF + 3
+                if partidaF[2]==partidaF[3]:
                     empateF = empateF + 1
                     pontosEF = pontosEF + 1
-                if listaPartidasFora[2]<listaPartidasFora[3]:
+                if partidaF[2]>partidaF[3]:
                     derrotaF = derrotaF + 1
                     pontosDF = pontosDF + 0
 
-                listaF3 = listaPartidasFora[3]
-                listaF2 = listaPartidasFora[2]
-                golsProsF = golsProsF + listaF3
-                golsContrasF = golsContrasF + listaF2
-                saldodeGolsF = golsProsF - golsContrasF
+                golsProsF = golsProsF + partidaF[3]
+                golsContrasF = golsContrasF + partidaF[2]
+
 
                 vitoriasTotais = vitoria + vitoriaF
                 empatesTotais = empate + empateF
                 derrotasTotais = derrota + derrotaF
                 pontosTorais = pontosV + pontosE + pontosVF + pontosEF
-                saldodeGolsTotais = saldodeGols + saldodeGolsF
+
+            golsProsTotal = golsProsTotal +(golsPros + golsProsF)
+            golsContrasTotal = golsContrasTotal + (golsContras + golsContrasF)
+                
+            saldodeGolsTotais = saldodeGolsTotais + (golsProsTotal - golsContrasTotal)
 
         sqlInserir = f'''
         INSERT INTO "Tabela"
-        Values(default, {idTime},{pontosTorais},{vitoriasTotais},{empatesTotais},{derrotasTotais},{golsProsF},{golsContrasF},{saldodeGolsTotais})
+        Values(default, {idTime},{pontosTorais},{vitoriasTotais},{empatesTotais},{derrotasTotais},{golsProsTotal},{golsContrasTotal},{saldodeGolsTotais})
         '''
     
         if conexaoBanco.manipularBanco(sqlInserir):
@@ -618,7 +609,6 @@ def zerarTabela():
     else:
         print("Ocorreu um erro na consulta, ou a lista é vazia.")
 
-#Aperfeiçoa esse range para usar o ID da propria lista#
     listaTabela = conexaoBanco.consultarBanco('''
     SELECT * FROM "Tabela"
     ORDER BY "ID" ASC
@@ -629,11 +619,10 @@ def zerarTabela():
     match confirmar:
         case "S":
            
-           for idTabela in  range(len(listaTabela)):
-            idTabela = idTabela +1
+           for idTabela in  listaTabela:
             sqlRemocao = f'''
             DELETE FROM "Tabela"
-            WHERE "ID" = '{idTabela}'
+            WHERE "ID" = '{idTabela[0]}'
             '''
             
             if conexaoBanco.manipularBanco(sqlRemocao):
