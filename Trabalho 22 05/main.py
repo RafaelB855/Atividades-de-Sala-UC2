@@ -671,3 +671,26 @@ while True:
             break
         case _:
             print("Escolha uma opção válida.")
+
+    print('''
+    Bem vindo ao Campeonato
+    1. Menu de Times
+    2. Ver Partidas
+    3. Ver Tabelas
+    0. Sair
+    ''')
+
+    op = input("Escolha o menu que deseja acessar:")
+
+    match op:
+        case "1":
+            verMenuTimes()
+        case "2":
+            verListaDePartidas()
+        case "3":
+            verListaDeTabela()
+        case "0":
+            print("Saindo da programa...")
+            break
+        case _:
+            print("Escolha uma opção válida.")
