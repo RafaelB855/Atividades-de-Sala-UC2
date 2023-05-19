@@ -212,7 +212,16 @@ def removerTime():
     print("Tela de remoção de time:")
     print("Lista de Times")
     
-    verListaDeTimes()
+    listaTimes = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Times"
+    ORDER BY "ID" ASC
+    ''')
+
+    if listaTimes:
+        print("ID | NOME")
+        for Time in listaTimes:
+            print(f"{Time[0]} | {Time[1]}")
+            
     timeEscolhido = input("Digite o id do time escolhido:")
     verTimeEspecifico(timeEscolhido)
     confirmar = input("Deseja remover este time? (S/N)").upper()
