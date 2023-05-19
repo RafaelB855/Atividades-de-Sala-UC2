@@ -54,6 +54,11 @@ conexaoBanco = Conexao("Campeonato","localhost","5432","postgres","postgres")
 
 #----------------------------------------------------------------------------------------------------------------------#
 
+class Times:
+    def __init__(self, ID, Nome):
+        self._ID = ID
+        self._Nome = Nome
+
 def verMenuTimes():
 
     while True:
@@ -234,6 +239,15 @@ def removerTime():
             print("Você digitou um comando inválido. Voltando ao menu.")
 
 #----------------------------------------------------------------------------------------------------------------------#
+
+class Partida:
+    def __init__(self, ID, Time1, Gols1, Gols2, Time2):
+        self._ID = ID
+        self._Time1 = Time1
+        self._Gols1 = Gols1
+        self._Gols2 = Gols2
+        self._Time2 = Time2
+
 
 def verMenuPartidas():
 
@@ -469,6 +483,18 @@ def zerarPartidas():
             print("Você digitou um comando inválido. Voltando ao menu.")
 
 #----------------------------------------------------------------------------------------------------------------------#
+
+class Tabela:
+    def __init__(self, ID, ID_Time, Pontos, Vitorias, Empates, Derrotas, GolsPró, GolsContra, SaldodeGols):
+        self._ID = ID
+        self._ID_Time = ID_Time
+        self._Pontos = Pontos
+        self._Vitorias = Vitorias
+        self._Empates = Empates
+        self._Derrotas = Derrotas
+        self._GolsPró = GolsPró
+        self._GolsContra = GolsContra
+        self._SaldodeGols = SaldodeGols
 
 def verMenuTabela():
 
