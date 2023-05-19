@@ -23,7 +23,7 @@ def criarTabela(con):
         FOREIGN KEY("Time2")
         REFERENCES "Times"("ID")
     )
-    '''
+    ''',
 
     '''
     CREATE TABLE "Tabela"(
@@ -688,27 +688,27 @@ def zerarTabela():
 
 #----------------------------------------------------------------------------------------------------------------------#
 
-while True:
+# while True:
 
-    print('''
-    Bem vindo ao Campeonato
-    1. Menu de Times
-    2. Menu das Partidas
-    3. Menu da Tabela
-    0. Sair
-    ''')
+#     print('''
+#     Bem vindo ao Campeonato
+#     1. Menu de Times
+#     2. Menu das Partidas
+#     3. Menu da Tabela
+#     0. Sair
+#     ''')
 
-    op = input("Escolha o menu que deseja acessar:")
+#     op = input("Escolha o menu que deseja acessar:")
 
-    match op:
-        case "1":
-            verMenuTimes()
-        case "2":
-            verMenuPartidas()
-        case "3":
-            verMenuTabela()
-        case "0":
-            print("Saindo da programa...")
-            break
-        case _:
-            print("Escolha uma opção válida.")
+#     match op:
+#         case "1":
+#             verMenuTimes()
+#         case "2":
+#             verMenuPartidas()
+#         case "3":
+#             verMenuTabela()
+#         case "0":
+#             print("Saindo da programa...")
+#             break
+#         case _:
+#             print("Escolha uma opção válida.")

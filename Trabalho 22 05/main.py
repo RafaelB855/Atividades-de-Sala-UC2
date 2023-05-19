@@ -23,7 +23,7 @@ def criarTabela(con):
         FOREIGN KEY("Time2")
         REFERENCES "Times"("ID")
     )
-    '''
+    ''',
 
     '''
     CREATE TABLE "Tabela"(
