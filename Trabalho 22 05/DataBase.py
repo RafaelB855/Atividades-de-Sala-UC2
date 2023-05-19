@@ -24,7 +24,7 @@ def criarTabela(con):
         REFERENCES "Times"("ID")
     )
     ''',
-
+    
     '''
     CREATE TABLE "Tabela"(
     "ID" int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -47,7 +47,6 @@ def criarTabela(con):
             print("Tabela criada.")
         else:
             print("Falha ao criar.")
-
 
 conexaoBanco = Conexao("Campeonato","localhost","5432","postgres","postgres")
 #criarTabela(conexaoBanco) 
@@ -118,38 +117,51 @@ def cadastrarNovoTime():
     print("Cadastro de Time - Insira as informações pedidas")
 
     nome = input("Digite o nome do Time:")
-
-    sqlInserir = f'''
-    INSERT INTO "Times"
-    Values(default, '{nome}')
-    '''
+    if nome == "":
+        print("Inserira um nome valido!")
     
-    if conexaoBanco.manipularBanco(sqlInserir):
-
-        print(f"O time {nome} foi inserido com sucesso.")
     else:
-        print("Falha ao inserir o time!")
+        sqlInserir = f'''
+        INSERT INTO "Times"
+        Values(default, '{nome}')
+        '''
+        
+        if conexaoBanco.manipularBanco(sqlInserir):
+
+            print(f"O time {nome} foi inserido com sucesso.")
+        else:
+            print("Falha ao inserir o time!")
 
 def atualizarTime():
     print("Tela de atualização de time:")
     print("Lista de Times")
     
-    verListaDeTimes()
+    listaTimes = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Times"
+    ORDER BY "ID" ASC
+    ''')
+
+    if listaTimes:
+        print("ID | NOME")
+        for Time in listaTimes:
+            print(f"{Time[0]} | {Time[1]}")
+
     TimeEscolhido = input("Digite o id do time escolhido:")
-    verTimeEspecifico(TimeEscolhido)
-    novoNome = input("Digite o novo nome (vazio para não alterar):")
-
-    if novoNome:
-        conexaoBanco.manipularBanco(f'''
-        UPDATE "Times"
-        SET "Nome" = '{novoNome}'
-        WHERE "ID" = {TimeEscolhido}
-        ''')
-
-        print(f"O nome foi alterado para '{novoNome}'.")
+    if TimeEscolhido.isdigit():
+        verTimeEspecifico(TimeEscolhido)
+        novoNome = input("Digite o novo nome (vazio para não alterar):")
     
-    if novoNome == "":
-        print("O nome não foi alterado.")
+        if novoNome:
+            conexaoBanco.manipularBanco(f'''
+            UPDATE "Times"
+            SET "Nome" = '{novoNome}'
+            WHERE "ID" = {TimeEscolhido}
+            ''')
+
+            print(f"O nome foi alterado para '{novoNome}'.")
+        
+        if novoNome == "":
+            print("O nome não foi alterado.")
 
 def verTimeEspecifico(idTime):
     Time = conexaoBanco.consultarBanco(f'''SELECT * FROM "Times"
@@ -217,7 +229,16 @@ def removerTime():
     print("Tela de remoção de time:")
     print("Lista de Times")
     
-    verListaDeTimes()
+    listaTimes = conexaoBanco.consultarBanco('''
+    SELECT * FROM "Times"
+    ORDER BY "ID" ASC
+    ''')
+
+    if listaTimes:
+        print("ID | NOME")
+        for Time in listaTimes:
+            print(f"{Time[0]} | {Time[1]}")
+
     timeEscolhido = input("Digite o id do time escolhido:")
     verTimeEspecifico(timeEscolhido)
     confirmar = input("Deseja remover este time? (S/N)").upper()
@@ -247,7 +268,6 @@ class Partida:
         self._Gols1 = Gols1
         self._Gols2 = Gols2
         self._Time2 = Time2
-
 
 def verMenuPartidas():
 
