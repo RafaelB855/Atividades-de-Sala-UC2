@@ -628,7 +628,7 @@ def atualizarTabela():
                 vitoriasTotais = vitoria + vitoriaF
                 empatesTotais = empate + empateF
                 derrotasTotais = derrota + derrotaF
-                pontosTorais = pontosV + pontosE + pontosVF + pontosEF
+                pontosTotais = pontosV + pontosE + pontosVF + pontosEF
 
             golsProsTotal = golsProsTotal +(golsPros + golsProsF)
             golsContrasTotal = golsContrasTotal + (golsContras + golsContrasF)
@@ -637,7 +637,7 @@ def atualizarTabela():
 
         sqlInserir = f'''
         INSERT INTO "Tabela"
-        Values(default, {idTime},{pontosTorais},{vitoriasTotais},{empatesTotais},{derrotasTotais},{golsProsTotal},{golsContrasTotal},{saldodeGolsTotais})
+        Values(default, {idTime},{pontosTotais},{vitoriasTotais},{empatesTotais},{derrotasTotais},{golsProsTotal},{golsContrasTotal},{saldodeGolsTotais})
         '''
     
         if conexaoBanco.manipularBanco(sqlInserir):
