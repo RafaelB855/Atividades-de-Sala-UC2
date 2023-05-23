@@ -8,7 +8,7 @@ class Conexao:
         self._user = user
         self._password = password
 
-    def ConsultarBanco(self,sql):
+    def consultarBanco(self,sql):
      try:
         con = psycopg2.connect(dbname=self._dbname, host=self._host, port=self._port, user=self._user, password=self._password)
 
@@ -27,7 +27,7 @@ class Conexao:
       print("Ocorreu um erro na conexão!", error)
       return False
 
-    def ManipularBanco(self,sql):
+    def manipularBanco(self,sql):
      try:
         con = psycopg2.connect(dbname=self._dbname, host=self._host, port=self._port, user=self._user, password=self._password)
 

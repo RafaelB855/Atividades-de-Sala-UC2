@@ -33,11 +33,10 @@ def criarTabela(con):
     ''']
 
     for sql in listaSql:
-        if con.ManipularBanco(sql):
+        if con.manipularBanco(sql):
             print("Tabela criada.")
         else:
             print("Falha ao criar.")
-
 
 conexaoBanco = Conexao("Biblioteca","localhost","5432","postgres","postgres")
 
@@ -70,10 +69,9 @@ def verMenuClientes():
 
         input("Digite Enter para continuar...")
 
-
 def verListaDeClientes():
 
-    listaClientes = conexaoBanco.ConsultarBanco('''
+    listaClientes = conexaoBanco.consultarBanco('''
     SELECT * FROM "Clientes"
     ORDER BY "ID" ASC
     ''')
@@ -85,7 +83,6 @@ def verListaDeClientes():
 
     else:
         print("Ocorreu um erro na consulta, ou a lista é vazia.")
-
 
 def cadastrarNovoCliente():
     print("Cadastro de Cliente - Insira as informações pedidas")
@@ -114,7 +111,7 @@ def cadastrarNovoCliente():
     '''
 
 
-    if conexaoBanco.ManipularBanco(sqlInserir):
+    if conexaoBanco.manipularBanco(sqlInserir):
 
         print(f"O Cliente {nome} foi inserido com sucesso.")
     else:
@@ -131,14 +128,14 @@ def atualizarCliente():
     novoCPF = input("Digite o novo cpf (vazio para não alterar):")
 
     if novoNome:
-        conexaoBanco.ManipularBanco(f'''
+        conexaoBanco.manipularBanco(f'''
         UPDATE "Clientes"
         SET "Nome" = '{novoNome}'
         WHERE "ID" = {clienteEscolhido}
         ''')
 
     if novoCPF:
-        conexaoBanco.ManipularBanco(f'''
+        conexaoBanco.manipularBanco(f'''
         UPDATE "Clientes"
         SET "CPF" = '{novoCPF}'
         WHERE "ID" = {clienteEscolhido}
@@ -147,7 +144,7 @@ def atualizarCliente():
     print("Tentativa de alteração executada.")
 
 def verClienteEspecifico(idCliente):
-    cliente = conexaoBanco.ConsultarBanco(f'''SELECT * FROM "Clientes"
+    cliente = conexaoBanco.consultarBanco(f'''SELECT * FROM "Clientes"
     WHERE "ID" = {idCliente}
     ''')[0]
 
@@ -160,7 +157,7 @@ def verClienteEspecifico(idCliente):
         CPF - {cliente[2]}
         ''')
 
-        listaAlugueis = conexaoBanco.ConsultarBanco(f'''
+        listaAlugueis = conexaoBanco.consultarBanco(f'''
         SELECT * FROM "Alugueis"
         WHERE "ID_Cliente" = '{cliente[0]}'
         ''')
@@ -170,12 +167,12 @@ def verClienteEspecifico(idCliente):
             print("ID | Cliente | Livro | Data de Aluguel")
             for aluguel in listaAlugueis:
                 
-                clienteDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                clienteDoAluguel = conexaoBanco.consultarBanco(f'''
                 SELECT * FROM "Clientes"
                 WHERE "ID" = {aluguel[1]}
                 ''')[0]
 
-                livroDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                livroDoAluguel = conexaoBanco.consultarBanco(f'''
                 SELECT * FROM "Livros"
                 WHERE "ID" = {aluguel[2]}
                 ''')[0]
@@ -199,7 +196,7 @@ def removerCliente():
 
     match confirmar:
         case "S":
-           resultadoRemocao = conexaoBanco.ManipularBanco(f'''
+           resultadoRemocao = conexaoBanco.manipularBanco(f'''
            DELETE FROM "Clientes"
            WHERE "ID" = '{clienteEscolhido}'
            ''')
@@ -246,7 +243,7 @@ def verMenuLivros():
 
 def verListaDeLivros():
 
-    listaLivros = conexaoBanco.ConsultarBanco('''
+    listaLivros = conexaoBanco.consultarBanco('''
     SELECT * FROM "Livros"
     ORDER BY "ID" ASC
     ''')
@@ -271,7 +268,7 @@ def cadastrarNovoLivro():
     Values(default, '{nome}', '{autor}')
     '''
 
-    if conexaoBanco.ManipularBanco(sqlInserir):
+    if conexaoBanco.manipularBanco(sqlInserir):
 
         print(f"O Livro {nome} foi inserido com sucesso.")
     else:
@@ -288,14 +285,14 @@ def atualizarLivro():
     novoAutor = input("Digite o novo Autor (vazio para não alterar):")
 
     if novoNome:
-        conexaoBanco.ManipularBanco(f'''
+        conexaoBanco.manipularBanco(f'''
         UPDATE "Livros"
         SET "Nome" = '{novoNome}'
         WHERE "ID" = {LivroEscolhido}
         ''')
 
     if novoAutor:
-        conexaoBanco.ManipularBanco(f'''
+        conexaoBanco.manipularBanco(f'''
         UPDATE "Livros"
         SET "Autor" = '{novoAutor}'
         WHERE "ID" = {LivroEscolhido}
@@ -304,7 +301,7 @@ def atualizarLivro():
     print("Tentativa de alteração executada.")
 
 def verLivroEspecifico(idLivro):
-    Livro = conexaoBanco.ConsultarBanco(f'''SELECT * FROM "Livros"
+    Livro = conexaoBanco.consultarBanco(f'''SELECT * FROM "Livros"
     WHERE "ID" = {idLivro}
     ''')
 
@@ -317,7 +314,7 @@ def verLivroEspecifico(idLivro):
         Autor - {Livro[2]}
         ''')
 
-        listaAlugueis = conexaoBanco.ConsultarBanco(f'''
+        listaAlugueis = conexaoBanco.consultarBanco(f'''
         SELECT * FROM "Alugueis"
         WHERE "ID_Livro" = '{Livro[0]}'
         ''')
@@ -327,12 +324,12 @@ def verLivroEspecifico(idLivro):
             print("ID | Cliente | Livro | Data de Aluguel")
             for aluguel in listaAlugueis:
                 
-                ClienteDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                ClienteDoAluguel = conexaoBanco.consultarBanco(f'''
                 SELECT * FROM "Cliente"
                 WHERE "ID" = {aluguel[1]}
                 ''')[0]
 
-                livroDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                livroDoAluguel = conexaoBanco.consultarBanco(f'''
                 SELECT * FROM "Livros"
                 WHERE "ID" = {aluguel[2]}
                 ''')[0]
@@ -356,7 +353,7 @@ def removerLivro():
 
     match confirmar:
         case "S":
-           resultadoRemocao = conexaoBanco.ManipularBanco(f'''
+           resultadoRemocao = conexaoBanco.manipularBanco(f'''
            DELETE FROM "Livros"
            WHERE "ID" = '{LivroEscolhido}'
            ''')
@@ -403,7 +400,7 @@ def verMenuAlugueis():
 
 def verListaDeAlugueis():
 
-    listaAlugueis = conexaoBanco.ConsultarBanco('''
+    listaAlugueis = conexaoBanco.consultarBanco('''
     SELECT * FROM "Alugueis"
     ORDER BY "ID" ASC
     ''')
@@ -412,12 +409,12 @@ def verListaDeAlugueis():
         print("ID | CLIENTE | LIVRO | DATA DA RETIRADA")
         for Aluguel in listaAlugueis:
 
-            clientedoaluguel = conexaoBanco.ConsultarBanco(f'''
+            clientedoaluguel = conexaoBanco.consultarBanco(f'''
                 SELECT * FROM "Clientes"
                 WHERE "ID" = '{Aluguel[1]}'
                 ''')[0]
             
-            livrodoaluguel = conexaoBanco.ConsultarBanco(f'''
+            livrodoaluguel = conexaoBanco.consultarBanco(f'''
                 SELECT * FROM "Livros"
                 WHERE "ID" = '{Aluguel[2]}'
                 ''')[0]
@@ -443,7 +440,7 @@ def cadastrarNovoAluguel():
     Values(default, '{idCliente}', '{idlivro}', default)
     '''
 
-    if conexaoBanco.ManipularBanco(sqlInserir):
+    if conexaoBanco.manipularBanco(sqlInserir):
 
         print(f"O Aluguel foi inserido com sucesso.")
     else:
@@ -460,7 +457,7 @@ def atualizarAluguel():
     novoIDLivro = input("Digite o novo ID do Livro (vazio para não alterar):")
 
     if novoIDCliente:
-        conexaoBanco.ManipularBanco(f'''
+        conexaoBanco.manipularBanco(f'''
         UPDATE "Alugueis"
         SET "ID_Cliente" = '{novoIDCliente}',
         "Data do Aluguel" = default
@@ -468,7 +465,7 @@ def atualizarAluguel():
         ''')
 
     if novoIDLivro:
-        conexaoBanco.ManipularBanco(f'''
+        conexaoBanco.manipularBanco(f'''
         UPDATE "Alugueis"
         SET "ID_Livro" = '{novoIDLivro}',
         "Data do Aluguel" = default
@@ -478,7 +475,7 @@ def atualizarAluguel():
     print("Tentativa de alteração executada.")
 
 def verAluguelEspecifico(idAluguel):
-    Aluguel = conexaoBanco.ConsultarBanco(f'''SELECT * FROM "Alugueis"
+    Aluguel = conexaoBanco.consultarBanco(f'''SELECT * FROM "Alugueis"
     WHERE "ID" = {idAluguel}
     ''')
 
@@ -492,7 +489,7 @@ def verAluguelEspecifico(idAluguel):
         Data do Aluguel - {Aluguel[3]}
         ''')
 
-        listaAlugueis = conexaoBanco.ConsultarBanco(f'''
+        listaAlugueis = conexaoBanco.consultarBanco(f'''
         SELECT * FROM "Alugueis"
         WHERE "ID_Aluguel" = '{Aluguel[0]}'
         ''')
@@ -502,12 +499,12 @@ def verAluguelEspecifico(idAluguel):
             print("ID | Cliente | Aluguel | Data de Aluguel")
             for aluguel in listaAlugueis:
                 
-                ClienteDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                ClienteDoAluguel = conexaoBanco.consultarBanco(f'''
                 SELECT * FROM "Cliente"
                 WHERE "ID" = {aluguel[1]}
                 ''')[0]
 
-                LivroDoAluguel = conexaoBanco.ConsultarBanco(f'''
+                LivroDoAluguel = conexaoBanco.consultarBanco(f'''
                 SELECT * FROM "Livros"
                 WHERE "ID" = {aluguel[2]}
                 ''')[0]
@@ -531,7 +528,7 @@ def removerAluguel():
 
     match confirmar:
         case "S":
-           resultadoRemocao = conexaoBanco.ManipularBanco(f'''
+           resultadoRemocao = conexaoBanco.manipularBanco(f'''
            DELETE FROM "Alugueis"
            WHERE "ID" = '{AluguelEscolhido}'
            ''')
